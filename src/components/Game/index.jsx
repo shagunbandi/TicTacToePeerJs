@@ -49,11 +49,10 @@ export class Game extends Component {
     peer.on("open", (id) => {
       this.setState({ newPeerId: id });
     });
-
     return peer;
   };
+
   onDataHandler = (data, conn, initialize) => {
-    console.log(data);
     if (initialize) {
       this.props.initialSetup(
         data.turn,
@@ -74,11 +73,11 @@ export class Game extends Component {
       );
     }
   };
+
   onCloseHandler = () => {
-    console.log("Opponent ass tore down");
-    console.log(this.props.winner);
     if (!this.props.winner) this.props.setWinner("X");
   };
+
   onNewGameSubmitHandler = (e) => {
     e.preventDefault();
     const { size, streak } = this.state;
@@ -97,7 +96,6 @@ export class Game extends Component {
 
       peer.on("connection", (conn) => {
         conn.on("data", (data) => {
-          // console.log("Connection", conn);
           this.onDataHandler(data, conn, data.initialization);
         });
         conn.on("open", () => {
@@ -110,7 +108,6 @@ export class Game extends Component {
         });
 
         conn.on("close", () => {
-          console.log("Connection Closed");
           this.onCloseHandler();
         });
 
@@ -140,7 +137,6 @@ export class Game extends Component {
       });
 
       conn.on("close", () => {
-        console.log("Connection Closed");
         this.onCloseHandler();
       });
 
@@ -164,63 +160,63 @@ export class Game extends Component {
       return <Play />;
     }
     return (
-      <div className="container">
-        <div className="row">
+      <div className='container'>
+        <div className='row'>
           <h3>Host a new Game</h3>
         </div>
         <br />
-        <div className="row">
+        <div className='row'>
           <form onSubmit={this.onNewGameSubmitHandler}>
-            <div className="form-group">
+            <div className='form-group'>
               <label>Size of the grid</label>
               <input
-                type="number"
-                className="form-control"
-                id="size"
+                type='number'
+                className='form-control'
+                id='size'
                 value={this.state.size}
                 onChange={this.onSizeChangeHandler}
-                placeholder="Enter Size"
+                placeholder='Enter Size'
               />
             </div>
-            <div className="form-group">
+            <div className='form-group'>
               <label>Streak length</label>
               <input
-                type="number"
-                className="form-control"
-                id="streak"
+                type='number'
+                className='form-control'
+                id='streak'
                 value={this.state.streak}
                 onChange={this.onStreakChangeHandler}
-                placeholder="Length of the Streak"
+                placeholder='Length of the Streak'
               />
             </div>
-            <button type="submit" className="btn btn-primary">
+            <button type='submit' className='btn btn-primary'>
               Start a New Game
             </button>
-            <small className="form-text text-danger">{this.state.err}</small>
+            <small className='form-text text-danger'>{this.state.err}</small>
           </form>
         </div>
         <hr />
-        <div className="row">
+        <div className='row'>
           <h3>Join a Game</h3>
         </div>
         <br />
-        <div className="row">
+        <div className='row'>
           <form onSubmit={this.onJoinGameSubmitHandler}>
-            <div className="form-group">
+            <div className='form-group'>
               <label>Peer Id</label>
               <input
-                type="text"
-                className="form-control"
-                id="peerId"
+                type='text'
+                className='form-control'
+                id='peerId'
                 value={this.state.peerId}
                 onChange={this.onPeerIdChangeHandler}
-                placeholder="Enter Peer Id"
+                placeholder='Enter Peer Id'
               />
             </div>
-            <button type="submit" className="btn btn-primary">
+            <button type='submit' className='btn btn-primary'>
               Play a friend
             </button>
-            <small className="form-text text-danger">{this.state.err}</small>
+            <small className='form-text text-danger'>{this.state.err}</small>
           </form>
         </div>
       </div>

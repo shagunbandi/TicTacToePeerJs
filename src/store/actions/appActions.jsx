@@ -1,10 +1,11 @@
 import { INITIAL_SETUP, USER_PLAY, SET_WINNER } from "./types";
 
-export const initialSetup = (size, streak, grid) => (dispatch) => {
+export const initialSetup = (size, streak, grid, conn) => (dispatch) => {
   dispatch({
     size: size,
     streak: streak,
     grid: grid,
+    conn: conn,
     type: INITIAL_SETUP,
   });
 };

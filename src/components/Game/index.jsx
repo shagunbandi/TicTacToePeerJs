@@ -39,13 +39,6 @@ export class Game extends Component {
     });
   };
 
-  sendData = (conn) => {
-    if (conn == null) {
-      console.log("Null");
-    }
-    conn.send("Hi");
-  };
-
   initialize = () => {
     let peer = new Peer({
       host: "127.0.0.1",
@@ -56,6 +49,16 @@ export class Game extends Component {
     peer.on("open", (id) => {
       this.setState({ newPeerId: id });
     });
+
+    function ping() {
+      console.log(peer);
+      peer.socket.send({
+        type: "ping",
+      });
+      setTimeout(ping, 16000);
+    }
+    ping();
+
     return peer;
   };
 
@@ -72,36 +75,67 @@ export class Game extends Component {
     } else if (parseInt(streak) > parseInt(size)) {
       this.setState({ err: "Streak cannot be greater than size" });
     } else {
-      this.props.initialSetup(size, streak, this.getGrid(size));
-
       this.setState({ setupDone: true, waiting: true });
       let peer = this.initialize();
 
-      peer.on("connection", (c) => {
-        console.log("Connected to: " + c.peer);
-        c.on("data", (data) => {
-          console.log("Data recieved", data);
-        });
-        // this.setState({ waiting: false });
+      peer.on("open", () => {
+        console.log("Open1");
       });
+
+      peer.on("connection", (conn) => {
+        console.log("Connected");
+        conn.on("data", (data) => {
+          console.log(data);
+        });
+        conn.send("Hi");
+
+        this.props.initialSetup(size, streak, this.getGrid(size), conn);
+        this.setState({ waiting: false });
+      });
+
+      peer.on("disconnected", () => {
+        peer.reconnect();
+      });
+
+      const ping = () => {
+        setTimeout(() => {
+          ping();
+        }, 16000);
+      };
+      ping();
     }
   };
 
   onJoinGameSubmitHandler = (e) => {
     e.preventDefault();
-    let conn = null;
-
     let peer = this.initialize();
-    conn = peer.connect(this.state.peerId, {
-      host: "127.0.0.1",
-      port: "9000",
-      path: "/myapp",
-      reliable: true,
-    });
 
-    conn.on("open", () => {
-      conn.on("data", (data) => {
-        console.log("Data recieved", data);
+    peer.on("open", () => {
+      console.log("Join Peer Open");
+      const conn = peer.connect(this.state.peerId, {
+        reliable: true,
+      });
+      console.log("Join Peer Open 2");
+      conn.on("open", () => {
+        console.log("Join Open");
+        conn.send("Hi");
+        conn.on("data", (data) => {
+          console.log(data);
+        });
+      });
+      const ping = () => {
+        setTimeout(() => {
+          console.log("Sending Hi");
+          if (conn.peerConnection)
+            console.log(conn.peerConnection.iceConnectionState);
+          else console.log(conn);
+          ping();
+        }, 2000);
+      };
+      ping();
+
+      conn.on("error", (err) => {
+        console.log(err);
       });
     });
   };

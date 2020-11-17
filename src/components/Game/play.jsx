@@ -9,6 +9,7 @@ export class Play extends Component {
     if (this.props.winner === "" && grid[rowIndex][colIndex] === "") {
       const turn = this.props.turn;
       grid[rowIndex][colIndex] = turn;
+      this.props.conn.send("Hi");
       this.props.userPlayed(rowIndex, colIndex);
       this.checkSuccess(rowIndex, colIndex, turn, grid);
     }
@@ -137,6 +138,7 @@ const mapStateToProps = (state) => ({
   turn: state.app.turn,
   winner: state.app.winner,
   cnt: state.app.cnt,
+  conn: state.app.conn,
 });
 
 export default connect(mapStateToProps, { userPlayed, setWinner })(Play);

@@ -1,10 +1,17 @@
-import { INITIAL_SETUP, SET_WINNER, USER_PLAY } from "../actions/types";
+import {
+  HOME_STATE,
+  INITIAL_SETUP,
+  SET_SUBTEXT,
+  SET_WINNER,
+  USER_PLAY,
+} from "../actions/types";
 
 const initialState = {
   size: 3,
   streak: 3,
   grid: [],
   winner: "",
+  subtext: "",
   cnt: 0,
   conn: null,
 };
@@ -38,6 +45,23 @@ export default function (state = initialState, action) {
       return {
         ...state,
         winner: action.winner,
+      };
+
+    case HOME_STATE:
+      return {
+        ...state,
+        size: 3,
+        subtext: "",
+        streak: 3,
+        cnt: 0,
+        conn: null,
+        ...action,
+      };
+
+    case SET_SUBTEXT:
+      return {
+        ...state,
+        subtext: action.subtext,
       };
 
     default:

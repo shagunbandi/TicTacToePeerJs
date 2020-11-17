@@ -2,10 +2,14 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 import { userPlayed, setWinner } from "../../store/actions/appActions";
-import { initialSetup } from "../../store/actions/appActions";
+import { initialSetup, resetToHome } from "../../store/actions/appActions";
 import { checkSuccess, getGrid } from "./util";
 export class Play extends Component {
   onResetHandler = () => {
+    if (!this.props.conn.open) {
+      this.props.resetToHome();
+      return;
+    }
     this.props.initialSetup(
       false,
       this.props.size,
@@ -20,6 +24,7 @@ export class Play extends Component {
       initialization: true,
     });
   };
+
   boxClicked = (rowIndex, colIndex) => {
     let grid = this.props.grid;
     if (
@@ -29,7 +34,6 @@ export class Play extends Component {
     ) {
       const turn = this.props.turn;
       grid[rowIndex][colIndex] = turn ? "X" : "O";
-      // this.props.conn.send("Hi");
       let conn = this.props.conn;
       conn.send({ rowIndex, colIndex, turn: true });
       this.props.userPlayed(rowIndex, colIndex, false);
@@ -69,6 +73,9 @@ export class Play extends Component {
         <div className='row'>
           <h1>{message}</h1>
         </div>
+        <div className='row'>
+          <h1>{this.props.subtext}</h1>
+        </div>
 
         {this.props.winner ? (
           <button className='btn btn-primary' onClick={this.onResetHandler}>
@@ -90,10 +97,12 @@ const mapStateToProps = (state) => ({
   winner: state.app.winner,
   cnt: state.app.cnt,
   conn: state.app.conn,
+  subtext: state.app.subtext,
 });
 
 export default connect(mapStateToProps, {
   userPlayed,
   setWinner,
   initialSetup,
+  resetToHome,
 })(Play);

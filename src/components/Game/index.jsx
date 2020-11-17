@@ -2,20 +2,25 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import Peer from "peerjs";
 
-import { initialSetup } from "../../store/actions/appActions";
-import { userPlayed, setWinner } from "../../store/actions/appActions";
+import {
+  userPlayed,
+  initialSetup,
+  resetToHome,
+  setWinner,
+  setSubText,
+} from "../../store/actions/appActions";
+
 import Play from "./play";
 import { checkSuccess, getGrid } from "./util";
 export class Game extends Component {
-  constructor() {
+  constructor(props) {
     super();
+    props.resetToHome(false, false);
     this.state = {
       size: 3,
       streak: 3,
       peerId: "",
       err: "",
-      setupDone: false,
-      waiting: false,
     };
   }
 
@@ -61,7 +66,7 @@ export class Game extends Component {
         getGrid(data.size),
         conn
       );
-      this.setState({ waiting: false, setupDone: true });
+      this.props.resetToHome(false, true);
     } else {
       this.props.userPlayed(data.rowIndex, data.colIndex, true);
       checkSuccess(
@@ -75,7 +80,10 @@ export class Game extends Component {
   };
 
   onCloseHandler = () => {
-    if (!this.props.winner) this.props.setWinner("X");
+    if (!this.props.winner) {
+      this.props.setWinner("X");
+      this.props.setSubText("Peer Connection Closed");
+    }
   };
 
   onNewGameSubmitHandler = (e) => {
@@ -91,7 +99,7 @@ export class Game extends Component {
     } else if (parseInt(streak) > parseInt(size)) {
       this.setState({ err: "Streak cannot be greater than size" });
     } else {
-      this.setState({ setupDone: true, waiting: true });
+      this.props.resetToHome(true, true);
       let peer = this.initialize();
 
       peer.on("connection", (conn) => {
@@ -112,7 +120,7 @@ export class Game extends Component {
         });
 
         this.props.initialSetup(false, size, streak, getGrid(size), conn);
-        this.setState({ waiting: false });
+        this.props.resetToHome(false, true);
       });
 
       peer.on("disconnected", () => {
@@ -147,7 +155,7 @@ export class Game extends Component {
   };
 
   render() {
-    if (this.state.waiting) {
+    if (this.props.waiting) {
       return (
         <div>
           <h3>Waiting for opponenent ...</h3>
@@ -156,7 +164,7 @@ export class Game extends Component {
         </div>
       );
     }
-    if (this.state.setupDone) {
+    if (this.props.setupDone) {
       return <Play />;
     }
     return (
@@ -229,10 +237,14 @@ const mapStateToProps = (state) => ({
   size: state.app.size,
   streak: state.app.streak,
   winner: state.app.winner,
+  waiting: state.app.waiting,
+  setupDone: state.app.setupDone,
 });
 
 export default connect(mapStateToProps, {
   initialSetup,
   userPlayed,
   setWinner,
+  resetToHome,
+  setSubText,
 })(Game);

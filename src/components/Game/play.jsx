@@ -6,22 +6,31 @@ import { userPlayed, setWinner } from "../../store/actions/appActions";
 export class Play extends Component {
   boxClicked = (rowIndex, colIndex) => {
     let grid = this.props.grid;
-    if (this.props.winner === "" && grid[rowIndex][colIndex] === "") {
+    if (
+      this.props.winner === "" &&
+      grid[rowIndex][colIndex] === "" &&
+      this.props.turn
+    ) {
       const turn = this.props.turn;
-      grid[rowIndex][colIndex] = turn;
-      this.props.conn.send("Hi");
-      this.props.userPlayed(rowIndex, colIndex);
-      this.checkSuccess(rowIndex, colIndex, turn, grid);
+      grid[rowIndex][colIndex] = turn ? "X" : "O";
+      // this.props.conn.send("Hi");
+      const conn = this.props.conn;
+      conn.on("open", () => {
+        console.log("Sending data from Play.jsx");
+        conn.send({ rowIndex, colIndex, turn: true });
+        this.props.userPlayed(rowIndex, colIndex, false);
+        this.checkSuccess(rowIndex, colIndex, turn ? "X" : "O", grid);
+      });
     }
   };
 
   checkSuccess = (rowIndex, colIndex, turn, grid) => {
     if (
-      this.props.cnt >= 2 * this.props.size - 1 &&
-      (this.checkHorizontal(rowIndex, colIndex, turn, grid) ||
-        this.checkVerical(rowIndex, colIndex, turn, grid) ||
-        this.checkDiagnolRight(rowIndex, colIndex, turn, grid) ||
-        this.checkDiagnolLeft(rowIndex, colIndex, turn, grid))
+      // this.props.cnt >= 2 * this.props.size - 1 &&
+      this.checkHorizontal(rowIndex, colIndex, turn, grid) ||
+      this.checkVerical(rowIndex, colIndex, turn, grid) ||
+      this.checkDiagnolRight(rowIndex, colIndex, turn, grid) ||
+      this.checkDiagnolLeft(rowIndex, colIndex, turn, grid)
     )
       this.props.setWinner(turn);
   };
@@ -95,6 +104,15 @@ export class Play extends Component {
   };
 
   render() {
+    console.log(this.props.conn);
+    this.props.conn.on("open", () => {
+      console.log("Connection Openned 109");
+
+      this.props.conn.on("data", (data) => {
+        console.log("112", data);
+      });
+    });
+
     let grid = this.props.grid.map((row, rowIndex) => {
       return (
         <div className='row'>

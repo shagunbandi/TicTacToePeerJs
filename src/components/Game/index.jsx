@@ -50,15 +50,6 @@ export class Game extends Component {
       this.setState({ newPeerId: id });
     });
 
-    function ping() {
-      console.log(peer);
-      peer.socket.send({
-        type: "ping",
-      });
-      setTimeout(ping, 16000);
-    }
-    ping();
-
     return peer;
   };
 
@@ -78,31 +69,29 @@ export class Game extends Component {
       this.setState({ setupDone: true, waiting: true });
       let peer = this.initialize();
 
-      peer.on("open", () => {
-        console.log("Open1");
-      });
-
       peer.on("connection", (conn) => {
-        console.log("Connected");
         conn.on("data", (data) => {
           console.log(data);
         });
-        conn.send("Hi");
+        conn.on("open", () => {
+          conn.send({
+            size: this.state.size,
+            streak: this.state.streak,
+            turn: true,
+          });
+        });
 
-        this.props.initialSetup(size, streak, this.getGrid(size), conn);
+        conn.on("close", () => {
+          console.log("Connection Closed");
+        });
+
+        this.props.initialSetup(false, size, streak, this.getGrid(size), conn);
         this.setState({ waiting: false });
       });
 
       peer.on("disconnected", () => {
         peer.reconnect();
       });
-
-      const ping = () => {
-        setTimeout(() => {
-          ping();
-        }, 16000);
-      };
-      ping();
     }
   };
 
@@ -111,28 +100,27 @@ export class Game extends Component {
     let peer = this.initialize();
 
     peer.on("open", () => {
-      console.log("Join Peer Open");
       const conn = peer.connect(this.state.peerId, {
         reliable: true,
       });
-      console.log("Join Peer Open 2");
+
       conn.on("open", () => {
-        console.log("Join Open");
-        conn.send("Hi");
+        conn.send("Vaibhaw Hi");
         conn.on("data", (data) => {
-          console.log(data);
+          this.props.initialSetup(
+            data.turn,
+            data.size,
+            data.streak,
+            this.getGrid(data.size),
+            conn
+          );
+          this.setState({ waiting: false, setupDone: true });
         });
       });
-      const ping = () => {
-        setTimeout(() => {
-          console.log("Sending Hi");
-          if (conn.peerConnection)
-            console.log(conn.peerConnection.iceConnectionState);
-          else console.log(conn);
-          ping();
-        }, 2000);
-      };
-      ping();
+
+      conn.on("close", () => {
+        console.log("Connection Closed");
+      });
 
       conn.on("error", (err) => {
         console.log(err);
@@ -171,7 +159,7 @@ export class Game extends Component {
         </div>
         <br />
         <div className='row'>
-          <form onSubmit={(e) => this.onNewGameSubmitHandler(e)}>
+          <form onSubmit={this.onNewGameSubmitHandler}>
             <div className='form-group'>
               <label>Size of the grid</label>
               <input

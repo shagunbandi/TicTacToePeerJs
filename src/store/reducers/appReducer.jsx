@@ -15,28 +15,23 @@ export default function (state = initialState, action) {
     case INITIAL_SETUP:
       return {
         ...state,
-        size: action.size,
-        streak: action.streak,
-        grid: action.grid,
-        turn: "X",
+        ...action,
         winner: "",
         cnt: 0,
-        conn: action.conn,
       };
 
     case USER_PLAY:
       let grid = state.grid;
-      grid[action.rowIndex][action.colIndex] = state.turn;
-      let turn = state.turn === "X" ? "O" : "X";
+      grid[action.rowIndex][action.colIndex] = state.turn ? "X" : "O";
       let cnt = state.cnt + 1;
       let winner = state.winner;
       if (cnt === state.size * state.size) winner = "draw";
       return {
         ...state,
         grid,
-        turn,
         cnt,
         winner,
+        turn: action.turn,
       };
 
     case SET_WINNER:

@@ -2,8 +2,24 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 import { userPlayed, setWinner } from "../../store/actions/appActions";
-
+import { initialSetup } from "../../store/actions/appActions";
+import { checkSuccess, getGrid } from "./util";
 export class Play extends Component {
+  onResetHandler = () => {
+    this.props.initialSetup(
+      false,
+      this.props.size,
+      this.props.streak,
+      getGrid(this.props.size),
+      this.props.conn
+    );
+    this.props.conn.send({
+      size: this.props.size,
+      streak: this.props.streak,
+      turn: true,
+      initialization: true,
+    });
+  };
   boxClicked = (rowIndex, colIndex) => {
     let grid = this.props.grid;
     if (
@@ -14,113 +30,24 @@ export class Play extends Component {
       const turn = this.props.turn;
       grid[rowIndex][colIndex] = turn ? "X" : "O";
       // this.props.conn.send("Hi");
-      const conn = this.props.conn;
-      conn.on("open", () => {
-        console.log("Sending data from Play.jsx");
-        conn.send({ rowIndex, colIndex, turn: true });
-        this.props.userPlayed(rowIndex, colIndex, false);
-        this.checkSuccess(rowIndex, colIndex, turn ? "X" : "O", grid);
-      });
+      let conn = this.props.conn;
+      conn.send({ rowIndex, colIndex, turn: true });
+      this.props.userPlayed(rowIndex, colIndex, false);
+      checkSuccess(rowIndex, colIndex, "X", grid, this.props);
     }
-  };
-
-  checkSuccess = (rowIndex, colIndex, turn, grid) => {
-    if (
-      // this.props.cnt >= 2 * this.props.size - 1 &&
-      this.checkHorizontal(rowIndex, colIndex, turn, grid) ||
-      this.checkVerical(rowIndex, colIndex, turn, grid) ||
-      this.checkDiagnolRight(rowIndex, colIndex, turn, grid) ||
-      this.checkDiagnolLeft(rowIndex, colIndex, turn, grid)
-    )
-      this.props.setWinner(turn);
-  };
-
-  checkHorizontal = (rowIndex, colIndex, turn, grid) => {
-    const { size, streak } = this.props;
-    let cnt = 0;
-    for (let i = colIndex; i < size; i++) {
-      if (grid[rowIndex][i] === turn) cnt++;
-      else break;
-    }
-    for (let i = colIndex - 1; i >= 0; i--) {
-      if (grid[rowIndex][i] === turn) cnt++;
-      else break;
-    }
-    if (cnt >= streak) {
-      return true;
-    }
-    return false;
-  };
-
-  checkVerical = (rowIndex, colIndex, turn, grid) => {
-    const { size, streak } = this.props;
-    let cnt = 0;
-    for (let i = rowIndex; i < size; i++) {
-      if (grid[i][colIndex] === turn) cnt++;
-      else break;
-    }
-    for (let i = rowIndex - 1; i >= 0; i--) {
-      if (grid[i][colIndex] === turn) cnt++;
-      else break;
-    }
-    if (cnt >= streak) {
-      return true;
-    }
-    return false;
-  };
-
-  checkDiagnolRight = (rowIndex, colIndex, turn, grid) => {
-    const { size, streak } = this.props;
-    let cnt = 0;
-    for (let i = rowIndex, j = colIndex; i < size && j < size; i++, j++) {
-      if (grid[i][j] === turn) cnt++;
-      else break;
-    }
-    for (let i = rowIndex - 1, j = colIndex - 1; i >= 0 && j >= 0; i--, j--) {
-      if (grid[i][j] === turn) cnt++;
-      else break;
-    }
-    if (cnt >= streak) {
-      return true;
-    }
-    return false;
-  };
-
-  checkDiagnolLeft = (rowIndex, colIndex, turn, grid) => {
-    const { size, streak } = this.props;
-    let cnt = 0;
-    for (let i = rowIndex, j = colIndex; i < size && j >= 0; i++, j--) {
-      if (grid[i][j] === turn) cnt++;
-      else break;
-    }
-    for (let i = rowIndex - 1, j = colIndex + 1; i >= 0 && j < size; i--, j++) {
-      if (grid[i][j] === turn) cnt++;
-      else break;
-    }
-    if (cnt >= streak) {
-      return true;
-    }
-    return false;
   };
 
   render() {
-    console.log(this.props.conn);
-    this.props.conn.on("open", () => {
-      console.log("Connection Openned 109");
-
-      this.props.conn.on("data", (data) => {
-        console.log("112", data);
-      });
-    });
-
+    // console.log(this.props.conn);
     let grid = this.props.grid.map((row, rowIndex) => {
       return (
-        <div className='row'>
+        <div className="row">
           {row.map((value, colIndex) => {
             return (
               <div
-                className='box text-center align-middle'
-                onClick={() => this.boxClicked(rowIndex, colIndex)}>
+                className="box text-center align-middle"
+                onClick={() => this.boxClicked(rowIndex, colIndex)}
+              >
                 {value}
               </div>
             );
@@ -133,17 +60,25 @@ export class Play extends Component {
     if (this.props.winner === "draw") {
       message = "Game Draw";
     } else if (this.props.winner === "") {
-      message = this.props.turn + " turn to play";
+      message = (this.props.turn ? "Your" : `Peer's`) + " turn to play";
     } else {
-      message = this.props.winner + " has won the game";
+      message = (this.props.winner === "X" ? "You" : "Peer") + " won the game";
     }
 
     return (
       <>
         {grid}
-        <div className='row'>
+        <div className="row">
           <h1>{message}</h1>
         </div>
+
+        {this.props.winner ? (
+          <button className="btn btn-primary" onClick={this.onResetHandler}>
+            Reset
+          </button>
+        ) : (
+          ""
+        )}
       </>
     );
   }
@@ -159,4 +94,8 @@ const mapStateToProps = (state) => ({
   conn: state.app.conn,
 });
 
-export default connect(mapStateToProps, { userPlayed, setWinner })(Play);
+export default connect(mapStateToProps, {
+  userPlayed,
+  setWinner,
+  initialSetup,
+})(Play);

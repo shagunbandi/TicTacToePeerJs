@@ -7,10 +7,10 @@
   font-size: xx-large;
 }
 
-.pointer {
+.cursor-pointer {
   cursor: pointer;
 }
 
-.disable-pointer {
+.cursor-diabled {
   cursor: default;
 }

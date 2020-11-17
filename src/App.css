@@ -3,4 +3,14 @@
   margin: 2px;
   width: 80px;
   height: 80px;
+  line-height: 80px;
+  font-size: xx-large;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.disable-pointer {
+  cursor: default;
 }

@@ -1,4 +1,3 @@
-import { act } from "react-dom/test-utils";
 import { INITIAL_SETUP, SET_WINNER, USER_PLAY } from "../actions/types";
 
 const initialState = {
@@ -6,6 +5,7 @@ const initialState = {
   streak: 3,
   grid: [],
   winner: "",
+  cnt: 0,
 };
 
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -17,17 +17,24 @@ export default function (state = initialState, action) {
         size: action.size,
         streak: action.streak,
         grid: action.grid,
-        turn: "x",
+        turn: "X",
+        winner: "",
+        cnt: 0,
       };
 
     case USER_PLAY:
       let grid = state.grid;
       grid[action.rowIndex][action.colIndex] = state.turn;
-      let turn = state.turn === "x" ? "o" : "x";
+      let turn = state.turn === "X" ? "O" : "X";
+      let cnt = state.cnt + 1;
+      let winner = state.winner;
+      if (cnt === state.size * state.size) winner = "draw";
       return {
         ...state,
         grid,
         turn,
+        cnt,
+        winner,
       };
 
     case SET_WINNER:

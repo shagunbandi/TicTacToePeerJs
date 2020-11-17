@@ -16,10 +16,11 @@ export class Play extends Component {
 
   checkSuccess = (rowIndex, colIndex, turn, grid) => {
     if (
-      this.checkHorizontal(rowIndex, colIndex, turn, grid) ||
-      this.checkVerical(rowIndex, colIndex, turn, grid) ||
-      this.checkDiagnolRight(rowIndex, colIndex, turn, grid) ||
-      this.checkDiagnolLeft(rowIndex, colIndex, turn, grid)
+      this.props.cnt >= 2 * this.props.size - 1 &&
+      (this.checkHorizontal(rowIndex, colIndex, turn, grid) ||
+        this.checkVerical(rowIndex, colIndex, turn, grid) ||
+        this.checkDiagnolRight(rowIndex, colIndex, turn, grid) ||
+        this.checkDiagnolLeft(rowIndex, colIndex, turn, grid))
     )
       this.props.setWinner(turn);
   };
@@ -93,14 +94,13 @@ export class Play extends Component {
   };
 
   render() {
-    console.log(this.props.grid);
     let grid = this.props.grid.map((row, rowIndex) => {
       return (
         <div className='row'>
           {row.map((value, colIndex) => {
             return (
               <div
-                className='box'
+                className='box text-center align-middle'
                 onClick={() => this.boxClicked(rowIndex, colIndex)}>
                 {value}
               </div>
@@ -109,15 +109,22 @@ export class Play extends Component {
         </div>
       );
     });
+
+    let message;
+    if (this.props.winner === "draw") {
+      message = "Game Draw";
+    } else if (this.props.winner === "") {
+      message = this.props.turn + " turn to play";
+    } else {
+      message = this.props.winner + " has won the game";
+    }
+
     return (
       <>
         {grid}
-        <br />
-        <h1>
-          {this.props.winner !== ""
-            ? this.props.winner + " has won the game"
-            : ""}
-        </h1>
+        <div className='row'>
+          <h1>{message}</h1>
+        </div>
       </>
     );
   }
@@ -129,6 +136,7 @@ const mapStateToProps = (state) => ({
   grid: state.app.grid,
   turn: state.app.turn,
   winner: state.app.winner,
+  cnt: state.app.cnt,
 });
 
 export default connect(mapStateToProps, { userPlayed, setWinner })(Play);

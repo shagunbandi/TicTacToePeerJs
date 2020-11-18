@@ -7,10 +7,14 @@
   font-size: xx-large;
 }
 
+.box-hover:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
 .cursor-pointer {
   cursor: pointer;
 }
 
-.cursor-diabled {
-  cursor: default;
+.cursor-disabled {
+  cursor: no-drop;
 }

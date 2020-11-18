@@ -44,12 +44,17 @@ export class Play extends Component {
   render() {
     let grid = this.props.grid.map((row, rowIndex) => {
       return (
-        <div className='row'>
+        <div className="row">
           {row.map((value, colIndex) => {
             return (
               <div
-                className='box text-center align-middle'
-                onClick={() => this.boxClicked(rowIndex, colIndex)}>
+                className={`box text-center align-middle ${
+                  this.props.turn && value === ""
+                    ? "cursor-pointer box-hover"
+                    : "cursor-disabled"
+                }`}
+                onClick={() => this.boxClicked(rowIndex, colIndex)}
+              >
                 {value}
               </div>
             );
@@ -70,15 +75,15 @@ export class Play extends Component {
     return (
       <>
         {grid}
-        <div className='row'>
+        <div className="row">
           <h1>{message}</h1>
         </div>
-        <div className='row'>
-          <h1>{this.props.subtext}</h1>
+        <div className="row">
+          <h1 className="text-danger">{this.props.subtext}</h1>
         </div>
 
         {this.props.winner ? (
-          <button className='btn btn-primary' onClick={this.onResetHandler}>
+          <button className="btn btn-primary" onClick={this.onResetHandler}>
             Reset
           </button>
         ) : (

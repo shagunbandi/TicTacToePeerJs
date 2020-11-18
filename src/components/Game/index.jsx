@@ -80,10 +80,9 @@ export class Game extends Component {
 	};
 
 	onCloseHandler = () => {
-    this.props.setSubText("Peer Connection Closed");
+		this.props.setSubText('Peer Connection Closed');
 		if (!this.props.winner) {
-      this.props.setWinner('X');
-      
+			this.props.setWinner('X');
 		}
 	};
 

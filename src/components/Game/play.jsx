@@ -48,7 +48,7 @@ export class Play extends Component {
 					{row.map((value, colIndex) => {
 						return (
 							<div
-								className='box text-center align-middle'
+								className={`box text-center align-middle ${this.props.turn && value==="" ? 'cursor-pointer box-hover' : 'cursor-disabled'}`}
 								onClick={() => this.boxClicked(rowIndex, colIndex)}>
 								{value}
 							</div>

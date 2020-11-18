@@ -1,16 +1,20 @@
 .box {
-  border: 2px solid grey;
-  margin: 2px;
-  width: 80px;
-  height: 80px;
-  line-height: 80px;
-  font-size: xx-large;
+	border: 2px solid grey;
+	margin: 2px;
+	width: 80px;
+	height: 80px;
+	line-height: 80px;
+	font-size: xx-large;
+}
+
+.box-hover:hover {
+	background-color: rgba(0, 0, 0, 0.2);
 }
 
 .cursor-pointer {
-  cursor: pointer;
+	cursor: pointer;
 }
 
-.cursor-diabled {
-  cursor: default;
+.cursor-disabled {
+	cursor: no-drop;
 }

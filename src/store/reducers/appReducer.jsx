@@ -54,7 +54,6 @@ export default function (state = initialState, action) {
         subtext: "",
         streak: 3,
         cnt: 0,
-        conn: null,
         ...action,
       };
 

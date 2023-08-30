@@ -1,5 +1,6 @@
 const checkSuccess = (rowIndex, colIndex, turn, grid, props) => {
-	const { streak, cnt } = props;
+	const { cnt } = props;
+	const streak = 3
 	if (
 		cnt >= (streak - 1) * 2 &&
 		(checkHorizontal(rowIndex, colIndex, turn, grid, props) ||
@@ -11,7 +12,8 @@ const checkSuccess = (rowIndex, colIndex, turn, grid, props) => {
 };
 
 const checkHorizontal = (rowIndex, colIndex, turn, grid, props) => {
-	const { size, streak } = props;
+	const size = 3
+	const streak = 3
 	let cnt = 0;
 	for (let i = colIndex; i < size; i++) {
 		if (grid[rowIndex][i] === turn) cnt++;
@@ -28,7 +30,8 @@ const checkHorizontal = (rowIndex, colIndex, turn, grid, props) => {
 };
 
 const checkVerical = (rowIndex, colIndex, turn, grid, props) => {
-	const { size, streak } = props;
+	const size = 3
+	const streak = 3
 	let cnt = 0;
 	for (let i = rowIndex; i < size; i++) {
 		if (grid[i][colIndex] === turn) cnt++;
@@ -45,7 +48,8 @@ const checkVerical = (rowIndex, colIndex, turn, grid, props) => {
 };
 
 const checkDiagnolRight = (rowIndex, colIndex, turn, grid, props) => {
-	const { size, streak } = props;
+	const size = 3
+	const streak = 3
 	let cnt = 0;
 	for (let i = rowIndex, j = colIndex; i < size && j < size; i++, j++) {
 		if (grid[i][j] === turn) cnt++;
@@ -62,7 +66,8 @@ const checkDiagnolRight = (rowIndex, colIndex, turn, grid, props) => {
 };
 
 const checkDiagnolLeft = (rowIndex, colIndex, turn, grid, props) => {
-	const { size, streak } = props;
+	const size = 3
+	const streak = 3
 	let cnt = 0;
 	for (let i = rowIndex, j = colIndex; i < size && j >= 0; i++, j--) {
 		if (grid[i][j] === turn) cnt++;
@@ -78,7 +83,8 @@ const checkDiagnolLeft = (rowIndex, colIndex, turn, grid, props) => {
 	return false;
 };
 
-const getGrid = (size) => {
+const getGridPro = () => {
+	const size = 3
 	let grid = [];
 	for (let index = 0; index < size; index++) {
 		grid.push([]);
@@ -91,5 +97,5 @@ const getGrid = (size) => {
 
 module.exports = {
 	checkSuccess,
-	getGrid,
+	getGridPro
 };

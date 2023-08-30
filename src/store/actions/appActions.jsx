@@ -6,11 +6,9 @@ import {
   SET_SUBTEXT,
 } from "./types";
 
-export const initialSetup = (turn, size, streak, grid, conn) => (dispatch) => {
+export const initialSetup = (turn, grid, conn) => (dispatch) => {
   dispatch({
     turn,
-    size,
-    streak,
     grid,
     conn,
     type: INITIAL_SETUP,

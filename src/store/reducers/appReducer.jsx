@@ -7,8 +7,6 @@ import {
 } from "../actions/types";
 
 const initialState = {
-  size: 3,
-  streak: 3,
   grid: [],
   winner: "",
   subtext: "",
@@ -29,10 +27,11 @@ export default function (state = initialState, action) {
 
     case USER_PLAY:
       let grid = state.grid;
+      const size = 3
       grid[action.rowIndex][action.colIndex] = state.turn ? "X" : "O";
       let cnt = state.cnt + 1;
       let winner = state.winner;
-      if (cnt === state.size * state.size) winner = "draw";
+      if (cnt === size * size) winner = "draw";
       return {
         ...state,
         grid,
@@ -50,9 +49,7 @@ export default function (state = initialState, action) {
     case HOME_STATE:
       return {
         ...state,
-        size: 3,
         subtext: "",
-        streak: 3,
         cnt: 0,
         ...action,
       };

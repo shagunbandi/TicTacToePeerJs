@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 
 import { userPlayed, setWinner } from '../../store/actions/appActions';
 import { initialSetup, resetToHome } from '../../store/actions/appActions';
-import { checkSuccess, getGrid } from './util';
+import { checkSuccess, getGridPro } from './util';
+
 export class Play extends Component {
 	onResetHandler = () => {
 		if (!this.props.conn.open) {
@@ -12,14 +13,10 @@ export class Play extends Component {
 		}
 		this.props.initialSetup(
 			false,
-			this.props.size,
-			this.props.streak,
-			getGrid(this.props.size),
+			getGridPro(),
 			this.props.conn
 		);
 		this.props.conn.send({
-			size: this.props.size,
-			streak: this.props.streak,
 			turn: true,
 			initialization: true,
 		});
@@ -94,8 +91,6 @@ export class Play extends Component {
 }
 
 const mapStateToProps = (state) => ({
-	size: state.app.size,
-	streak: state.app.streak,
 	grid: state.app.grid,
 	turn: state.app.turn,
 	winner: state.app.winner,

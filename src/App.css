@@ -6,13 +6,28 @@
 
 .mid-box-container {
 	flex: 0 0 33.333333%;
-	padding: 1.5%;
+	padding: 1.5vw;
+	width: 30vw;
+	position: relative;
 }
 
 .mid-box {
 	display: flex;
 	flex-wrap: wrap;
+	/* position: absolute */
 }
+
+.mid-box-success {
+    z-index: -1;
+    position: absolute;
+    top: 1.5vw;
+    bottom: 1.5vw;
+    left: 1.5vw;
+    right: 1.5vw;
+    line-height: 30vw;
+    font-size: 26vw;
+    text-align: center;
+    opacity: 20%;}
 
 .small-box-container {
 	flex: 0 0 33.333333%;
@@ -21,7 +36,7 @@
 	height: 10vw;
 }
 .small-box {
-	border: 2px solid grey;
+	border: 2px solid black;
 	height: 100%;
 	width: 100%;
 	line-height: 10vw;
@@ -34,6 +49,7 @@
     opacity: 50%;
 	cursor: no-drop;
 }
+
 
 
 /* Styling */

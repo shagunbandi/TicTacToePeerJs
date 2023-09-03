@@ -34,7 +34,9 @@ export class Play extends Component {
 			let conn = this.props.conn;
 			conn.send({ midBoxIndex, smallBoxIndex, turn: true });
 			this.props.userPlayed(midBoxIndex, smallBoxIndex, false);
-			checkSuccess(midBoxIndex, smallBoxIndex, 'X', grid, this.props);
+
+			// First one to complete the puzzle 
+			grid[9][midBoxIndex] === '' && checkSuccess(midBoxIndex, smallBoxIndex, 'X', grid, this.props);
 		}
 	};
 	
@@ -73,7 +75,9 @@ export class Play extends Component {
 					<div className='mid-box'>
 					{midBox.map((value, smallBoxIndex) => getSmallBox(midBoxIndex, smallBoxIndex, value))}
 					</div>
-					<div className='mid-box-success'>{this.props.grid[9][midBoxIndex]}</div>
+					<div className='mid-box-success'>X
+						{/* {this.props.grid[9][midBoxIndex]} */}
+					</div>
 				</div>
 			);
 		});

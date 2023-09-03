@@ -28,7 +28,7 @@ export default function (state = initialState, action) {
     case USER_PLAY:
       let grid = state.grid;
       const size = 3
-      grid[action.rowIndex][action.colIndex] = state.turn ? "X" : "O";
+      grid[action.midBoxIndex][action.smallBoxIndex] = state.turn ? "X" : "O";
       let cnt = state.cnt + 1;
       let winner = state.winner;
       if (cnt === size * size) winner = "draw";
@@ -38,6 +38,7 @@ export default function (state = initialState, action) {
         cnt,
         winner,
         turn: action.turn,
+        lastClickedBoxIndex: action.smallBoxIndex
       };
 
     case SET_WINNER:

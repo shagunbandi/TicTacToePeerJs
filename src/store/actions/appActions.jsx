@@ -15,10 +15,10 @@ export const initialSetup = (turn, grid, conn) => (dispatch) => {
   });
 };
 
-export const userPlayed = (rowIndex, colIndex, turn) => (dispatch) => {
+export const userPlayed = (midBoxIndex, smallBoxIndex, turn) => (dispatch) => {
   dispatch({
-    rowIndex,
-    colIndex,
+    midBoxIndex,
+    smallBoxIndex,
     turn,
     type: USER_PLAY,
   });

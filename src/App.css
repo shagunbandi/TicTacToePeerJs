@@ -1,12 +1,47 @@
-.box {
-	border: 2px solid grey;
-	margin: 2px;
-	width: 80px;
-	height: 80px;
-	line-height: 80px;
-	font-size: xx-large;
+/* Main Structure */
+.main-grid-container, .main-grid {
+  display: flex;
+  flex-wrap: wrap;
 }
 
+.mid-box-container {
+	flex: 0 0 33.333333%;
+	padding: 1.5%;
+}
+
+.mid-box {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.small-box-container {
+	flex: 0 0 33.333333%;
+	/* padding: 1vw; */
+	width: 10vw;
+	height: 10vw;
+}
+.small-box {
+	border: 2px solid grey;
+	height: 100%;
+	width: 100%;
+	line-height: 10vw;
+    font-size: 5vw;
+}
+
+/* Styling Grid */
+.main-grid-container .unclickable-box {
+	background-color: white;
+    opacity: 50%;
+}
+
+.mid-box-container {
+}
+
+.small-box-container {
+}
+
+
+/* Styling */
 .box-hover:hover {
 	background-color: rgba(0, 0, 0, 0.2);
 }

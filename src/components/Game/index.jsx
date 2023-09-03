@@ -50,10 +50,10 @@ export class Game extends Component {
 			);
 			this.props.resetToHome(false, true);
 		} else {
-			this.props.userPlayed(data.rowIndex, data.colIndex, true);
+			this.props.userPlayed(data.midBoxIndex, data.smallBoxIndex, true);
 			checkSuccess(
-				data.rowIndex,
-				data.colIndex,
+				data.midBoxIndex,
+				data.smallBoxIndex,
 				'O',
 				this.props.grid,
 				this.props

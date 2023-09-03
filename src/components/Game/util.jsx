@@ -1,26 +1,26 @@
-const checkSuccess = (rowIndex, colIndex, turn, grid, props) => {
+const checkSuccess = (midBoxIndex, smallBoxIndex, turn, grid, props) => {
 	const { cnt } = props;
 	const streak = 3
 	if (
 		cnt >= (streak - 1) * 2 &&
-		(checkHorizontal(rowIndex, colIndex, turn, grid, props) ||
-			checkVerical(rowIndex, colIndex, turn, grid, props) ||
-			checkDiagnolRight(rowIndex, colIndex, turn, grid, props) ||
-			checkDiagnolLeft(rowIndex, colIndex, turn, grid, props))
+		(checkHorizontal(midBoxIndex, smallBoxIndex, turn, grid, props) ||
+			checkVerical(midBoxIndex, smallBoxIndex, turn, grid, props) ||
+			checkDiagnolRight(midBoxIndex, smallBoxIndex, turn, grid, props) ||
+			checkDiagnolLeft(midBoxIndex, smallBoxIndex, turn, grid, props))
 	)
 		props.setWinner(turn);
 };
 
-const checkHorizontal = (rowIndex, colIndex, turn, grid, props) => {
+const checkHorizontal = (midBoxIndex, smallBoxIndex, turn, grid, props) => {
 	const size = 3
 	const streak = 3
 	let cnt = 0;
-	for (let i = colIndex; i < size; i++) {
-		if (grid[rowIndex][i] === turn) cnt++;
+	for (let i = smallBoxIndex; i < size; i++) {
+		if (grid[midBoxIndex][i] === turn) cnt++;
 		else break;
 	}
-	for (let i = colIndex - 1; i >= 0; i--) {
-		if (grid[rowIndex][i] === turn) cnt++;
+	for (let i = smallBoxIndex - 1; i >= 0; i--) {
+		if (grid[midBoxIndex][i] === turn) cnt++;
 		else break;
 	}
 	if (cnt >= streak) {
@@ -29,16 +29,16 @@ const checkHorizontal = (rowIndex, colIndex, turn, grid, props) => {
 	return false;
 };
 
-const checkVerical = (rowIndex, colIndex, turn, grid, props) => {
+const checkVerical = (midBoxIndex, smallBoxIndex, turn, grid, props) => {
 	const size = 3
 	const streak = 3
 	let cnt = 0;
-	for (let i = rowIndex; i < size; i++) {
-		if (grid[i][colIndex] === turn) cnt++;
+	for (let i = midBoxIndex; i < size; i++) {
+		if (grid[i][smallBoxIndex] === turn) cnt++;
 		else break;
 	}
-	for (let i = rowIndex - 1; i >= 0; i--) {
-		if (grid[i][colIndex] === turn) cnt++;
+	for (let i = midBoxIndex - 1; i >= 0; i--) {
+		if (grid[i][smallBoxIndex] === turn) cnt++;
 		else break;
 	}
 	if (cnt >= streak) {
@@ -47,15 +47,15 @@ const checkVerical = (rowIndex, colIndex, turn, grid, props) => {
 	return false;
 };
 
-const checkDiagnolRight = (rowIndex, colIndex, turn, grid, props) => {
+const checkDiagnolRight = (midBoxIndex, smallBoxIndex, turn, grid, props) => {
 	const size = 3
 	const streak = 3
 	let cnt = 0;
-	for (let i = rowIndex, j = colIndex; i < size && j < size; i++, j++) {
+	for (let i = midBoxIndex, j = smallBoxIndex; i < size && j < size; i++, j++) {
 		if (grid[i][j] === turn) cnt++;
 		else break;
 	}
-	for (let i = rowIndex - 1, j = colIndex - 1; i >= 0 && j >= 0; i--, j--) {
+	for (let i = midBoxIndex - 1, j = smallBoxIndex - 1; i >= 0 && j >= 0; i--, j--) {
 		if (grid[i][j] === turn) cnt++;
 		else break;
 	}
@@ -65,15 +65,15 @@ const checkDiagnolRight = (rowIndex, colIndex, turn, grid, props) => {
 	return false;
 };
 
-const checkDiagnolLeft = (rowIndex, colIndex, turn, grid, props) => {
+const checkDiagnolLeft = (midBoxIndex, smallBoxIndex, turn, grid, props) => {
 	const size = 3
 	const streak = 3
 	let cnt = 0;
-	for (let i = rowIndex, j = colIndex; i < size && j >= 0; i++, j--) {
+	for (let i = midBoxIndex, j = smallBoxIndex; i < size && j >= 0; i++, j--) {
 		if (grid[i][j] === turn) cnt++;
 		else break;
 	}
-	for (let i = rowIndex - 1, j = colIndex + 1; i >= 0 && j < size; i--, j++) {
+	for (let i = midBoxIndex - 1, j = smallBoxIndex + 1; i >= 0 && j < size; i--, j++) {
 		if (grid[i][j] === turn) cnt++;
 		else break;
 	}
@@ -84,12 +84,11 @@ const checkDiagnolLeft = (rowIndex, colIndex, turn, grid, props) => {
 };
 
 const getGridPro = () => {
-	const size = 3
 	let grid = [];
-	for (let index = 0; index < size; index++) {
+	for (let index = 0; index < 9; index++) {
 		grid.push([]);
-		for (let index2 = 0; index2 < size; index2++) {
-			grid[index].push('');
+		for (let index2 = 0; index2 < 9; index2++) {
+			grid[index].push('')
 		}
 	}
 	return grid;

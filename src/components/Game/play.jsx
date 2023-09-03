@@ -75,8 +75,8 @@ export class Play extends Component {
 					<div className='mid-box'>
 					{midBox.map((value, smallBoxIndex) => getSmallBox(midBoxIndex, smallBoxIndex, value))}
 					</div>
-					<div className='mid-box-success'>X
-						{/* {this.props.grid[9][midBoxIndex]} */}
+					<div className='mid-box-success'>
+						{this.props.grid[9][midBoxIndex]}
 					</div>
 				</div>
 			);

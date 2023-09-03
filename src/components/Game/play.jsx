@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { userPlayed, setWinner } from '../../store/actions/appActions';
 import { initialSetup, resetToHome } from '../../store/actions/appActions';
-import { checkMidBoxSuccess, getGridPro } from './util';
+import { checkSuccess, getGridPro } from './util';
 
 export class Play extends Component {
 	onResetHandler = () => {
@@ -34,7 +34,7 @@ export class Play extends Component {
 			let conn = this.props.conn;
 			conn.send({ midBoxIndex, smallBoxIndex, turn: true });
 			this.props.userPlayed(midBoxIndex, smallBoxIndex, false);
-			checkMidBoxSuccess(midBoxIndex, smallBoxIndex, 'X', grid, this.props);
+			checkSuccess(midBoxIndex, smallBoxIndex, 'X', grid, this.props);
 		}
 	};
 	
@@ -63,7 +63,7 @@ export class Play extends Component {
 				</div>
 			</div>
 		
-		let midGrid = this.props.grid.map((midBox, midBoxIndex) => {
+		let midGrid = this.props.grid.slice(0, -1).map((midBox, midBoxIndex) => {
 			return (
 				<div className={`mid-box-container ${
 					isClickable(midBoxIndex)
@@ -73,6 +73,7 @@ export class Play extends Component {
 					<div className='mid-box'>
 					{midBox.map((value, smallBoxIndex) => getSmallBox(midBoxIndex, smallBoxIndex, value))}
 					</div>
+					<div className='mid-box-success'>{this.props.grid[9][midBoxIndex]}</div>
 				</div>
 			);
 		});

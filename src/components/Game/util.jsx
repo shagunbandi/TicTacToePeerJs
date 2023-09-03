@@ -1,21 +1,14 @@
-const checkMainGridSuccess = (midBoxIndex, turn, grid, props) => {
-	if (checkHorizontal(midBoxIndex, turn, grid)
-		|| checkVerical(midBoxIndex, turn, grid)
-		|| checkDiagonal(midBoxIndex, turn, grid)) {
-			props.setWinner(turn)
-		}
-}
-
-const checkMidBoxSuccess = (midBoxIndex, smallBoxIndex, turn, grid, props) => {
-	const { cnt } = props;
-	const streak = 3
-	if (
-		cnt >= (streak - 1) * 2 &&
-		(checkHorizontal(smallBoxIndex, turn, grid[midBoxIndex])
+const checkSuccess = (midBoxIndex, smallBoxIndex, turn, grid, props) => {
+	if (checkHorizontal(smallBoxIndex, turn, grid[midBoxIndex])
 			|| checkVerical(smallBoxIndex, turn, grid[midBoxIndex])
-			|| checkDiagonal(smallBoxIndex, turn, grid[midBoxIndex]))
+			|| checkDiagonal(smallBoxIndex, turn, grid[midBoxIndex])
 	) {
-		checkMainGridSuccess(midBoxIndex, turn, grid, props)
+		if (midBoxIndex === 9) {
+			props.setWinner(turn)
+			return
+		}
+		grid[9][midBoxIndex] = turn
+		checkSuccess(9, midBoxIndex, turn, grid, props)
 	}
 };
 
@@ -48,7 +41,7 @@ const checkDiagonal = (clickedBoxIndex, turn, grid) => {
 
 const getGridPro = () => {
 	let grid = [];
-	for (let index = 0; index < 9; index++) {
+	for (let index = 0; index < 10; index++) {
 		grid.push([]);
 		for (let index2 = 0; index2 < 9; index2++) {
 			grid[index].push('')
@@ -58,6 +51,6 @@ const getGridPro = () => {
 };
 
 module.exports = {
-	checkMidBoxSuccess,
+	checkSuccess,
 	getGridPro
 };

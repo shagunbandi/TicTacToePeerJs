@@ -32,16 +32,15 @@
 .main-grid-container .unclickable-box {
 	background-color: white;
     opacity: 50%;
-}
-
-.mid-box-container {
-}
-
-.small-box-container {
+	cursor: no-drop;
 }
 
 
 /* Styling */
+.last-clicked {
+	color: red;
+}
+
 .box-hover:hover {
 	background-color: rgba(0, 0, 0, 0.2);
 }

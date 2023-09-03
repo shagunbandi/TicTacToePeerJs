@@ -15,7 +15,7 @@ export const initialSetup = (turn, grid, conn) => (dispatch) => {
   });
 };
 
-export const userPlayed = (midBoxIndex, smallBoxIndex, turn) => (dispatch) => {
+export const userPlayed = (midBoxIndex, smallBoxIndex, turn) => (dispatch) => {  
   dispatch({
     midBoxIndex,
     smallBoxIndex,

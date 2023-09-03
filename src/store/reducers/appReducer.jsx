@@ -12,6 +12,8 @@ const initialState = {
   subtext: "",
   cnt: 0,
   conn: null,
+  lastClickedSmallBoxIndex: -1,
+  lastClickedMidBoxIndex: -1
 };
 
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -23,11 +25,13 @@ export default function (state = initialState, action) {
         ...action,
         winner: "",
         cnt: 0,
+        lastClickedSmallBoxIndex: -1,
+        lastClickedMidBoxIndex: -1
       };
 
     case USER_PLAY:
       let grid = state.grid;
-      const size = 3
+      const size = 9
       grid[action.midBoxIndex][action.smallBoxIndex] = state.turn ? "X" : "O";
       let cnt = state.cnt + 1;
       let winner = state.winner;
@@ -38,7 +42,8 @@ export default function (state = initialState, action) {
         cnt,
         winner,
         turn: action.turn,
-        lastClickedBoxIndex: action.smallBoxIndex
+        lastClickedSmallBoxIndex: action.smallBoxIndex,
+        lastClickedMidBoxIndex: action.midBoxIndex
       };
 
     case SET_WINNER:
@@ -52,6 +57,8 @@ export default function (state = initialState, action) {
         ...state,
         subtext: "",
         cnt: 0,
+        lastClickedSmallBoxIndex: -1,
+        lastClickedMidBoxIndex: -1,
         ...action,
       };
 

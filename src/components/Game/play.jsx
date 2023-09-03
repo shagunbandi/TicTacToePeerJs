@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { userPlayed, setWinner } from '../../store/actions/appActions';
 import { initialSetup, resetToHome } from '../../store/actions/appActions';
-import { checkSuccess, getGridPro } from './util';
+import { checkMidBoxSuccess, getGridPro } from './util';
 
 export class Play extends Component {
 	onResetHandler = () => {
@@ -34,20 +34,31 @@ export class Play extends Component {
 			let conn = this.props.conn;
 			conn.send({ midBoxIndex, smallBoxIndex, turn: true });
 			this.props.userPlayed(midBoxIndex, smallBoxIndex, false);
-			checkSuccess(midBoxIndex, smallBoxIndex, 'X', grid, this.props);
+			checkMidBoxSuccess(midBoxIndex, smallBoxIndex, 'X', grid, this.props);
 		}
 	};
+	
 
 	render() {
+		let isClickable = (midBoxIndex) => !this.props.turn 
+			|| this.props.lastClickedSmallBoxIndex === -1
+			|| (this.props.turn
+			&& this.props.lastClickedSmallBoxIndex === midBoxIndex)
+		
+		
 		let getSmallBox = (midBoxIndex, smallBoxIndex, value) =>
 			<div className='small-box-container box'>
 				<div
-				className={`small-box text-center align-middle ${
-					this.props.turn && value === ''
-						? 'cursor-pointer box-hover'
-						: 'cursor-disabled'
-				}`}
-				onClick={() => this.boxClicked(midBoxIndex, smallBoxIndex)}>
+					className={`small-box text-center align-middle 
+					${isClickable(midBoxIndex) && this.props.turn && value === ''
+						? ' cursor-pointer box-hover'
+						: ' cursor-disabled'
+					}
+					${this.props.turn
+					&& this.props.lastClickedSmallBoxIndex === smallBoxIndex
+					&& this.props.lastClickedMidBoxIndex === midBoxIndex
+					? ' last-clicked' : ''}`}
+					onClick={() => this.boxClicked(midBoxIndex, smallBoxIndex)}>
 					{value}
 				</div>
 			</div>
@@ -55,19 +66,11 @@ export class Play extends Component {
 		let midGrid = this.props.grid.map((midBox, midBoxIndex) => {
 			return (
 				<div className={`mid-box-container ${
-						!this.props.turn 
-						|| (this.props.turn
-						&& this.props.lastClickedBoxIndex === midBoxIndex)
+					isClickable(midBoxIndex)
 						? 'clickable-box'
 						: 'unclickable-box'
 				}`}>
-					<div className={`mid-box ${
-						!this.props.turn 
-						|| (this.props.turn
-						&& this.props.lastClickedBoxIndex === midBoxIndex)
-						? 'clickable-box'
-						: 'unclickable-box'
-					}`}>
+					<div className='mid-box'>
 					{midBox.map((value, smallBoxIndex) => getSmallBox(midBoxIndex, smallBoxIndex, value))}
 					</div>
 				</div>
@@ -91,6 +94,8 @@ export class Play extends Component {
 
 		return (
 			<>
+				smallIdx: {this.props.lastClickedSmallBoxIndex}
+				midIdx: {this.props.lastClickedMidBoxIndex}
 				{grid}
 				<div className='row'>
 					<h1>{message}</h1>
@@ -118,7 +123,8 @@ const mapStateToProps = (state) => ({
 	cnt: state.app.cnt,
 	conn: state.app.conn,
 	subtext: state.app.subtext,
-	lastClickedBoxIndex: state.app.lastClickedBoxIndex
+	lastClickedSmallBoxIndex: state.app.lastClickedSmallBoxIndex,
+	lastClickedMidBoxIndex: state.app.lastClickedMidBoxIndex
 });
 
 export default connect(mapStateToProps, {

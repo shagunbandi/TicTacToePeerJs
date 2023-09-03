@@ -11,7 +11,7 @@ import {
 } from '../../store/actions/appActions';
 
 import Play from './play';
-import { checkSuccess, getGridPro } from './util';
+import { checkMidBoxSuccess, getGridPro } from './util';
 export class Game extends Component {
 	constructor(props) {
 		super();
@@ -51,7 +51,7 @@ export class Game extends Component {
 			this.props.resetToHome(false, true);
 		} else {
 			this.props.userPlayed(data.midBoxIndex, data.smallBoxIndex, true);
-			checkSuccess(
+			checkMidBoxSuccess(
 				data.midBoxIndex,
 				data.smallBoxIndex,
 				'O',

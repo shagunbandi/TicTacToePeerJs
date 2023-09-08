@@ -1,6 +1,6 @@
 # Tic-Tac-Toe
 
-Multiplayer Tic Tac Toe game. All the communications are browser to browser, no server in between.
+Multiplayer Super Tic Tac Toe game. All the communications are browser to browser, no server in between. Complete 3 tic tac toes to win.
 
 ## Setup
 

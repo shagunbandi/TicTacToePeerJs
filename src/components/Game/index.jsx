@@ -7,36 +7,22 @@ import {
 	initialSetup,
 	resetToHome,
 	setWinner,
+	updateGrid,
 	setSubText,
 } from '../../store/actions/appActions';
 
 import Play from './play';
-import { checkSuccess, getGrid } from './util';
+import { checkSuccess, getGridPro } from './util';
 export class Game extends Component {
 	constructor(props) {
 		super();
 		props.resetToHome(false, false);
 		this.state = {
-			size: 3,
-			streak: 3,
 			peerId: '',
 			err: '',
+			count: '',
 		};
 	}
-
-	onSizeChangeHandler = (e) => {
-		this.setState({
-			size: e.target.value,
-			err: '',
-		});
-	};
-
-	onStreakChangeHandler = (e) => {
-		this.setState({
-			streak: e.target.value,
-			err: '',
-		});
-	};
 
 	onPeerIdChangeHandler = (e) => {
 		this.setState({
@@ -58,24 +44,24 @@ export class Game extends Component {
 	};
 
 	onDataHandler = (data, conn, initialize) => {
+		console.log(data, initialize)
 		if (initialize) {
 			this.props.initialSetup(
 				data.turn,
-				data.size,
-				data.streak,
-				getGrid(data.size),
+				getGridPro(),
 				conn
 			);
 			this.props.resetToHome(false, true);
 		} else {
-			this.props.userPlayed(data.rowIndex, data.colIndex, true);
+			this.props.userPlayed(data.midBoxIndex, data.smallBoxIndex, true);
 			checkSuccess(
-				data.rowIndex,
-				data.colIndex,
+				data.midBoxIndex,
+				data.smallBoxIndex,
 				'O',
 				this.props.grid,
 				this.props
 			);
+			this.setState({count: this.state.count+1})
 		}
 	};
 
@@ -88,45 +74,32 @@ export class Game extends Component {
 
 	onNewGameSubmitHandler = (e) => {
 		e.preventDefault();
-		const { size, streak } = this.state;
-		if (
-			size === '' ||
-			streak === '' ||
-			parseInt(streak) <= 0 ||
-			parseInt(size) <= 0
-		) {
-			this.setState({ err: 'Size and Streak cannot be empty' });
-		} else if (parseInt(streak) > parseInt(size)) {
-			this.setState({ err: 'Streak cannot be greater than size' });
-		} else {
-			this.props.resetToHome(true, true);
-			let peer = this.initialize();
+		
+		this.props.resetToHome(true, true);
+		let peer = this.initialize();
 
-			peer.on('connection', (conn) => {
-				conn.on('data', (data) => {
-					this.onDataHandler(data, conn, data.initialization);
+		peer.on('connection', (conn) => {
+			conn.on('data', (data) => {
+				this.onDataHandler(data, conn, data.initialization);
+			});
+			conn.on('open', () => {
+				conn.send({
+					turn: true,
+					initialization: true,
 				});
-				conn.on('open', () => {
-					conn.send({
-						size: this.state.size,
-						streak: this.state.streak,
-						turn: true,
-						initialization: true,
-					});
-				});
-
-				conn.on('close', () => {
-					this.onCloseHandler();
-				});
-
-				this.props.initialSetup(false, size, streak, getGrid(size), conn);
-				this.props.resetToHome(false, true);
 			});
 
-			peer.on('disconnected', () => {
-				peer.reconnect();
+			conn.on('close', () => {
+				this.onCloseHandler();
 			});
-		}
+
+			this.props.initialSetup(false, getGridPro(), conn);
+			this.props.resetToHome(false, true);
+		});
+
+		peer.on('disconnected', () => {
+			peer.reconnect();
+		});
 	};
 
 	onJoinGameSubmitHandler = (e) => {
@@ -165,7 +138,7 @@ export class Game extends Component {
 			);
 		}
 		if (this.props.setupDone) {
-			return <Play />;
+			return <Play key={this.state.count} />;
 		}
 		return (
 			<div className='container'>
@@ -175,28 +148,6 @@ export class Game extends Component {
 				<br />
 				<div className='row'>
 					<form onSubmit={this.onNewGameSubmitHandler}>
-						<div className='form-group'>
-							<label>Size of the grid</label>
-							<input
-								type='number'
-								className='form-control'
-								id='size'
-								value={this.state.size}
-								onChange={this.onSizeChangeHandler}
-								placeholder='Enter Size'
-							/>
-						</div>
-						<div className='form-group'>
-							<label>Streak length</label>
-							<input
-								type='number'
-								className='form-control'
-								id='streak'
-								value={this.state.streak}
-								onChange={this.onStreakChangeHandler}
-								placeholder='Length of the Streak'
-							/>
-						</div>
 						<button type='submit' className='btn btn-primary'>
 							Start a New Game
 						</button>
@@ -233,8 +184,6 @@ export class Game extends Component {
 
 const mapStateToProps = (state) => ({
 	grid: state.app.grid,
-	size: state.app.size,
-	streak: state.app.streak,
 	winner: state.app.winner,
 	waiting: state.app.waiting,
 	setupDone: state.app.setupDone,
@@ -245,6 +194,7 @@ export default connect(mapStateToProps, {
 	initialSetup,
 	userPlayed,
 	setWinner,
+	updateGrid,
 	resetToHome,
 	setSubText,
 })(Game);

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { userPlayed, setWinner } from '../../store/actions/appActions';
+import { userPlayed, setWinner, updateGrid } from '../../store/actions/appActions';
 import { initialSetup, resetToHome } from '../../store/actions/appActions';
-import { checkSuccess, getGrid } from './util';
+import { checkSuccess, getGridPro } from './util';
+
 export class Play extends Component {
 	onResetHandler = () => {
 		if (!this.props.conn.open) {
@@ -12,55 +13,80 @@ export class Play extends Component {
 		}
 		this.props.initialSetup(
 			false,
-			this.props.size,
-			this.props.streak,
-			getGrid(this.props.size),
+			getGridPro(),
 			this.props.conn
 		);
 		this.props.conn.send({
-			size: this.props.size,
-			streak: this.props.streak,
 			turn: true,
 			initialization: true,
 		});
 	};
 
-	boxClicked = (rowIndex, colIndex) => {
+	boxClicked = (midBoxIndex, smallBoxIndex) => {
 		let grid = this.props.grid;
 		if (
 			this.props.winner === '' &&
-			grid[rowIndex][colIndex] === '' &&
+			grid[midBoxIndex][smallBoxIndex] === '' &&
 			this.props.turn
 		) {
 			const turn = this.props.turn;
-			grid[rowIndex][colIndex] = turn ? 'X' : 'O';
+			grid[midBoxIndex][smallBoxIndex] = turn ? 'X' : 'O';
 			let conn = this.props.conn;
-			conn.send({ rowIndex, colIndex, turn: true });
-			this.props.userPlayed(rowIndex, colIndex, false);
-			checkSuccess(rowIndex, colIndex, 'X', grid, this.props);
+			conn.send({ midBoxIndex, smallBoxIndex, turn: true });
+			this.props.userPlayed(midBoxIndex, smallBoxIndex, false);
+
+			// First one to complete the puzzle 
+			grid[9][midBoxIndex] === '' && checkSuccess(midBoxIndex, smallBoxIndex, 'X', grid, this.props);
 		}
 	};
+	
 
 	render() {
-		let grid = this.props.grid.map((row, rowIndex) => {
+		let isClickable = (midBoxIndex) => !this.props.turn 
+			|| this.props.lastClickedSmallBoxIndex === -1
+			|| (this.props.turn
+			&& this.props.lastClickedSmallBoxIndex === midBoxIndex)
+		
+		
+		let getSmallBox = (midBoxIndex, smallBoxIndex, value) =>
+			<div className='small-box-container box'>
+				<div
+					className={`small-box text-center align-middle 
+					${isClickable(midBoxIndex) && this.props.turn && value === ''
+						? ' cursor-pointer box-hover'
+						: ' cursor-disabled'
+					}
+					${this.props.turn
+					&& this.props.lastClickedSmallBoxIndex === smallBoxIndex
+					&& this.props.lastClickedMidBoxIndex === midBoxIndex
+					? ' last-clicked' : ''}`}
+					onClick={() => this.boxClicked(midBoxIndex, smallBoxIndex)}>
+					{value}
+				</div>
+			</div>
+		
+		let midGrid = this.props.grid.slice(0, -1).map((midBox, midBoxIndex) => {
 			return (
-				<div className='row'>
-					{row.map((value, colIndex) => {
-						return (
-							<div
-								className={`box text-center align-middle ${
-									this.props.turn && value === ''
-										? 'cursor-pointer box-hover'
-										: 'cursor-disabled'
-								}`}
-								onClick={() => this.boxClicked(rowIndex, colIndex)}>
-								{value}
-							</div>
-						);
-					})}
+				<div className={`mid-box-container ${
+					isClickable(midBoxIndex)
+						? 'clickable-box'
+						: 'unclickable-box'
+				}`}>
+					<div className='mid-box'>
+					{midBox.map((value, smallBoxIndex) => getSmallBox(midBoxIndex, smallBoxIndex, value))}
+					</div>
+					<div className='mid-box-success'>
+						{this.props.grid[9][midBoxIndex]}
+					</div>
 				</div>
 			);
 		});
+
+		let grid = <div className='main-grid-container'>
+			<div className='main-grid'>
+				{midGrid}
+			</div>
+		</div>
 
 		let message;
 		if (this.props.winner === 'draw') {
@@ -94,19 +120,20 @@ export class Play extends Component {
 }
 
 const mapStateToProps = (state) => ({
-	size: state.app.size,
-	streak: state.app.streak,
 	grid: state.app.grid,
 	turn: state.app.turn,
 	winner: state.app.winner,
 	cnt: state.app.cnt,
 	conn: state.app.conn,
 	subtext: state.app.subtext,
+	lastClickedSmallBoxIndex: state.app.lastClickedSmallBoxIndex,
+	lastClickedMidBoxIndex: state.app.lastClickedMidBoxIndex
 });
 
 export default connect(mapStateToProps, {
 	userPlayed,
 	setWinner,
+	updateGrid,
 	initialSetup,
 	resetToHome,
 })(Play);

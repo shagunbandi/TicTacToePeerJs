@@ -3,24 +3,23 @@ import {
   USER_PLAY,
   SET_WINNER,
   HOME_STATE,
+  UPDATE_GRID,
   SET_SUBTEXT,
 } from "./types";
 
-export const initialSetup = (turn, size, streak, grid, conn) => (dispatch) => {
+export const initialSetup = (turn, grid, conn) => (dispatch) => {
   dispatch({
     turn,
-    size,
-    streak,
     grid,
     conn,
     type: INITIAL_SETUP,
   });
 };
 
-export const userPlayed = (rowIndex, colIndex, turn) => (dispatch) => {
+export const userPlayed = (midBoxIndex, smallBoxIndex, turn) => (dispatch) => {  
   dispatch({
-    rowIndex,
-    colIndex,
+    midBoxIndex,
+    smallBoxIndex,
     turn,
     type: USER_PLAY,
   });
@@ -30,6 +29,13 @@ export const setWinner = (winner) => (dispatch) => {
   dispatch({
     winner,
     type: SET_WINNER,
+  });
+};
+
+export const updateGrid = (grid) => (dispatch) => {
+  dispatch({
+    grid,
+    type: UPDATE_GRID,
   });
 };
 

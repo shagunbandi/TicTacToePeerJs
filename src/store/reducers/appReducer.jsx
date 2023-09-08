@@ -7,13 +7,13 @@ import {
 } from "../actions/types";
 
 const initialState = {
-  size: 3,
-  streak: 3,
   grid: [],
   winner: "",
   subtext: "",
   cnt: 0,
   conn: null,
+  lastClickedSmallBoxIndex: -1,
+  lastClickedMidBoxIndex: -1
 };
 
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -25,20 +25,25 @@ export default function (state = initialState, action) {
         ...action,
         winner: "",
         cnt: 0,
+        lastClickedSmallBoxIndex: -1,
+        lastClickedMidBoxIndex: -1
       };
 
     case USER_PLAY:
       let grid = state.grid;
-      grid[action.rowIndex][action.colIndex] = state.turn ? "X" : "O";
+      const size = 9
+      grid[action.midBoxIndex][action.smallBoxIndex] = state.turn ? "X" : "O";
       let cnt = state.cnt + 1;
       let winner = state.winner;
-      if (cnt === state.size * state.size) winner = "draw";
+      if (cnt === size * size) winner = "draw";
       return {
         ...state,
         grid,
         cnt,
         winner,
         turn: action.turn,
+        lastClickedSmallBoxIndex: action.smallBoxIndex,
+        lastClickedMidBoxIndex: action.midBoxIndex
       };
 
     case SET_WINNER:
@@ -50,10 +55,10 @@ export default function (state = initialState, action) {
     case HOME_STATE:
       return {
         ...state,
-        size: 3,
         subtext: "",
-        streak: 3,
         cnt: 0,
+        lastClickedSmallBoxIndex: -1,
+        lastClickedMidBoxIndex: -1,
         ...action,
       };
 

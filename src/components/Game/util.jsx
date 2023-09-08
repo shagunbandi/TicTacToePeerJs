@@ -8,6 +8,7 @@ const checkSuccess = (midBoxIndex, smallBoxIndex, turn, grid, props) => {
 			return
 		}
 		grid[9][midBoxIndex] = turn
+		props.updateGrid([...grid])
 		checkSuccess(9, midBoxIndex, turn, grid, props)
 	}
 };

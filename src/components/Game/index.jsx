@@ -7,6 +7,7 @@ import {
 	initialSetup,
 	resetToHome,
 	setWinner,
+	updateGrid,
 	setSubText,
 } from '../../store/actions/appActions';
 
@@ -19,6 +20,7 @@ export class Game extends Component {
 		this.state = {
 			peerId: '',
 			err: '',
+			count: '',
 		};
 	}
 
@@ -42,6 +44,7 @@ export class Game extends Component {
 	};
 
 	onDataHandler = (data, conn, initialize) => {
+		console.log(data, initialize)
 		if (initialize) {
 			this.props.initialSetup(
 				data.turn,
@@ -58,6 +61,7 @@ export class Game extends Component {
 				this.props.grid,
 				this.props
 			);
+			this.setState({count: this.state.count+1})
 		}
 	};
 
@@ -134,7 +138,7 @@ export class Game extends Component {
 			);
 		}
 		if (this.props.setupDone) {
-			return <Play />;
+			return <Play key={this.state.count} />;
 		}
 		return (
 			<div className='container'>
@@ -190,6 +194,7 @@ export default connect(mapStateToProps, {
 	initialSetup,
 	userPlayed,
 	setWinner,
+	updateGrid,
 	resetToHome,
 	setSubText,
 })(Game);

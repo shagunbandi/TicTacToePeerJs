@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { userPlayed, setWinner } from '../../store/actions/appActions';
+import { userPlayed, setWinner, updateGrid } from '../../store/actions/appActions';
 import { initialSetup, resetToHome } from '../../store/actions/appActions';
 import { checkSuccess, getGridPro } from './util';
 
@@ -99,8 +99,6 @@ export class Play extends Component {
 
 		return (
 			<>
-				smallIdx: {this.props.lastClickedSmallBoxIndex}
-				midIdx: {this.props.lastClickedMidBoxIndex}
 				{grid}
 				<div className='row'>
 					<h1>{message}</h1>
@@ -135,6 +133,7 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
 	userPlayed,
 	setWinner,
+	updateGrid,
 	initialSetup,
 	resetToHome,
 })(Play);

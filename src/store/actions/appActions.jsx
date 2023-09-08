@@ -3,6 +3,7 @@ import {
   USER_PLAY,
   SET_WINNER,
   HOME_STATE,
+  UPDATE_GRID,
   SET_SUBTEXT,
 } from "./types";
 
@@ -28,6 +29,13 @@ export const setWinner = (winner) => (dispatch) => {
   dispatch({
     winner,
     type: SET_WINNER,
+  });
+};
+
+export const updateGrid = (grid) => (dispatch) => {
+  dispatch({
+    grid,
+    type: UPDATE_GRID,
   });
 };
 
